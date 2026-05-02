@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地震學第三章：重點整理 - 黃靖家</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&family=JetBrains+Mono&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <!-- KaTeX for high-quality math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #020617;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        .heading-font { font-family: 'Playfair Display', serif; }
+        
+        .page-transition {
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hidden-page {
+            display: none;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .seismic-wave-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            z-index: -1;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        .wave-path {
+            fill: none;
+            stroke: #38bdf8;
+            stroke-width: 2;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 8px #38bdf8);
+        }
+
+        .menu-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+        .menu-card:hover {
+            transform: translateY(-10px);
+            border-color: #38bdf8;
+            background: rgba(30, 41, 59, 0.9);
+            box-shadow: 0 20px 40px -10px rgba(56, 189, 248, 0.3);
+        }
+
+        .math-block {
+            background: #000;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            color: #38bdf8;
+            margin: 1.5rem 0;
+            border-left: 4px solid #0ea5e9;
+            overflow-x: auto;
+        }
+
+        .img-container {
+            background: white;
+            padding: 12px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+            margin: 1.5rem 0;
+        }
+        .img-container img { width: 100%; border-radius: 8px; }
+
+        .formula-box {
+            background: rgba(14, 165, 233, 0.05);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .summary-box {
+            background: rgba(34, 197, 94, 0.05);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .key-badge {
+            display: inline-block;
+            background: #0ea5e9;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 8px;
+            text-transform: uppercase;
+        }
+
+        #back-home-btn {
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glow-circle {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(40px);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- 1. 入口首頁 (Hero/Lobby) -->
+    <section id="hero-page" class="h-screen w-full flex flex-col items-center justify-center text-center px-4 relative overflow-hidden">
+        <div class="glow-circle" style="top: 10%; left: 10%;"></div>
+        <div class="glow-circle" style="bottom: 10%; right: 10%;"></div>
+        
+        <svg class="seismic-wave-bg" viewBox="0 0 1000 200" preserveAspectRatio="none">
+            <path class="wave-path" id="dynamicWave" d="M0,100 Q125,50 250,100 T500,100 T750,100 T1000,100" />
+        </svg>
+
+        <div class="max-w-4xl">
+            <div class="mb-2">
+                <span class="text-sky-500 font-mono tracking-[0.5em] text-sm uppercase">Earthquake Seismology</span>
+            </div>
+            <h1 class="text-6xl md:text-8xl font-bold heading-font mb-8 text-white tracking-tighter drop-shadow-2xl">
+                地震學 <span class="text-sky-500">第三章</span>
+            </h1>
+            
+            <div class="glass-card p-10 rounded-[2.5rem] mb-12 border-t border-white/20 relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-1 h-full bg-sky-500 transition-all group-hover:w-full opacity-10"></div>
+                <p class="text-sky-400 font-mono tracking-widest mb-4 text-xs uppercase">Student Information</p>
+                <h2 class="text-3xl font-bold text-white mb-2">黃靖家</h2>
+                <p class="text-slate-400 text-lg">u11310017 <span class="mx-2 text-slate-700">|</span> 地生系二</p>
+            </div>
+
+            <button onclick="showPage('menu-page')" class="group relative px-16 py-5 bg-sky-600 hover:bg-sky-500 rounded-2xl text-xl font-bold text-white transition-all shadow-2xl shadow-sky-900/40 hover:-translate-y-1">
+                <span class="relative z-10">點我探索章節</span>
+                <div class="absolute inset-0 bg-white/20 rounded-2xl scale-0 group-hover:scale-100 transition-transform duration-500 origin-center"></div>
+            </button>
+        </div>
+    </section>
+
+    <!-- 2. 章節目錄 -->
+    <section id="menu-page" class="hidden-page min-h-screen py-24 px-6 max-w-7xl mx-auto relative">
+        <div class="absolute top-10 left-6">
+            <button onclick="showPage('hero-page')" class="group flex items-center text-slate-400 hover:text-sky-400 transition-all duration-300 bg-slate-900/50 px-4 py-2 rounded-xl border border-white/5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 transform group-hover:-translate-x-1 transition-transform" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                <span class="font-bold">返回大廳</span>
+            </button>
+        </div>
+
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-bold text-white mb-4 heading-font">章節目錄</h2>
+            <p class="text-slate-500 tracking-widest">CHAPTER OVERVIEW</p>
+            <div class="h-1.5 w-24 bg-sky-500 mx-auto rounded-full mt-4"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="menu-grid">
+            <!-- 由 JS 動態填充 -->
+        </div>
+    </section>
+
+    <!-- 3. 詳細內容展示 -->
+    <section id="content-page" class="hidden-page min-h-screen py-20 px-6 max-w-5xl mx-auto">
+        <div id="section-body"></div>
+    </section>
+
+    <!-- 4. 浮動返回首頁按鈕 -->
+    <button id="back-home-btn" onclick="showPage('menu-page')" class="hidden fixed bottom-10 left-10 p-5 bg-sky-600 rounded-[1.5rem] shadow-[0_20px_50px_rgba(14,165,233,0.5)] border border-white/20">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </button>
+
+    <!-- 章節數據 JSON -->
+    <script id="section-data" type="application/json">
+    {
+        "s3_1": {
+            "title": "3.1 簡介 (Introduction)",
+            "summary": "地震學是研究地球內部結構最精確的工具，它確立了地球的層狀特徵（地殼、地函、外核、內核），並提供了物質成分分離（分異作用）的主要證據。相較於重力法，地震學能精確定位邊界的確切深度。",
+            "images": [
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.5_p2_1.png",
+                    "desc": "此圖是地球層狀構造與地震波傳播路徑的經典展示，詳細描繪了 P 波與 S 波如何由震源發射並穿透地球內部。我們可以清晰觀察到，當波抵達核幔邊界（CMB）時發生劇烈的反射與折射，標誌著矽酸鹽地函與金屬外核的物理轉變。特別重要的是，液態外核導致 S 波（剪力波）完全消失，這一關鍵地震學證據證實了外核的流體性質。此外，圖中標註的 ScP、PKP 等波相，是科學家計算各層深度（如 CMB 在 2891 公里、ICB 在 5150 公里）的核心數據來源。這張照片直觀地呈現了地震學如何像超音波一樣「掃描」行星內部，揭示了地球演化過程中化學成分分離的動力學歷史。每一條線路都代表著能量在不同彈性係數介質中的最小時路徑，是現代地球物理學奠基的觀測基礎。"
+                }
+            ],
+            "formulas": [],
+            "point_list": ["地震學提供比重力、磁力更高的解析度。", "確立地殼、地函、外核（液態）、內核（固態）的分層。", "核幔邊界 (CMB) 定位於 2891 公里，內核邊界 (ICB) 則為 5150 公里。"]
+        },
+        "s3_2": {
+            "title": "3.2 折射地震學 (Refraction Seismology)",
+            "summary": "本節介紹利用臨界折射的首波（Head Wave）來探測高速下層介質的方法，是發現莫霍面（Moho）的基礎理論。",
+            "images": [
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.2_p5_1.png",
+                    "desc": "本圖定義了水平層狀模型中地震射線的三種基本行為。第一種是沿著地表傳播的直達波，其速度直接反映表層物質性質。第二種是在交界面反射回地表的反射波，其走時遵循雙曲線關係。第三種、也是最關鍵的，是當入射角達到臨界角時產生的『首波』(Head Wave)。首波會沿著速度較快的下層介質滑行，並不斷向上輻射能量。這種物理現象是折射探勘的核心，因為它能將更深層的速度資訊帶回地表。透過觀察首波的路徑幾何，我們可以使用司乃爾定律計算出深部的速度跳躍，是識別地殼底部莫霍面最直接的物理方式。此圖呈現了地震波在界面處能量分配與傳播路徑的幾何規則，對理解地殼結構反演至關重要。"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.2_p5_2.png",
+                    "desc": "此為典型的走時-距離 (T-X) 圖，視覺化地呈現了直達波與首波在觀測上的競爭關係。直達波表現為過原點的直線，其斜率為上層波速的倒數。反射波則呈現雙曲線特徵，在近震央處最遲抵達。最引人注目的是首波曲線，它雖然因為需要向下傳播而具有初始的截距時間，但因其在高速下層傳播，其斜率較小。圖中標註的交叉距離 (Crossover Distance) 是區分上下層訊號的分水嶺：在該點之後，首波會成為最早抵達的先達波。科學家莫霍洛維奇正是透過觀察這種先達波斜率的改變，發現了地殼與地函間的速度不連續性。透過直線在 Y 軸的截距，地震學家可以精確推導出上層覆蓋層的物理厚度，這是區域性地震結構研究中最標準的數據處理方法。"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.2_p12_13.png",
+                    "desc": "這是一張來自中加州折射剖面的真實紀錄剖面。與理論模型不同，真實資料受環境噪音影響，但仍能觀察到明確的波前序列。橫軸代表震央距，縱軸為約化後的走時。圖中清晰標繪了 Pg（地殼波）與 Pn（莫霍面首波）的分支。分析此圖可得知，加州地區的地殼厚度並非均一，而是隨著板塊運動與造山帶位置呈現顯著變化。這類實測剖面圖證明了折射地震學在探測數十公里深處界面時的高解析能力。透過數位波形的震幅與相位追蹤，地震學家得以計算出地函頂部的真實 P 波速度（約 8.0 km/s），並藉此繪製出莫霍面的起伏，為聖安德烈斯斷層帶的深部構造提供了關鍵的物理約束，是地殼演化研究中不可或缺的實證資料。"
+                }
+            ],
+            "formulas": [
+                {
+                    "latex": "\\\\frac{\\\\sin(i_1)}{v_1} = \\\\frac{\\\\sin(i_2)}{v_2} = p",
+                    "define": "司乃爾定律 (Snell's Law)",
+                    "symbols": [
+                        "$i_1, i_2$：波在介面兩側的入射角與折射角。",
+                        "$v_1, v_2$：介面兩側的波傳播速度。",
+                        "$p$：射線參數，在水平均勻層狀介質中沿路徑保持常數。"
+                    ]
+                }
+            ],
+            "point_list": ["利用首波 (Pn) 到時反演地殼厚度。", "直達波與首波的斜率分別對應 1/v0 與 1/v1。", "莫霍面發現源於 200km 處的走時曲線斜率跳躍。"]
+        },
+        "s3_3": {
+            "title": "3.3 反射地震學 (Reflection Seismology)",
+            "summary": "反射法是石油探勘的主力，透過界面反射訊號與精密處理（NMO、CMP 疊加）獲取地底高解析影像。",
+            "images": [
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.3_p13_6.png",
+                    "desc": "此圖演示了反射地震處理中最核心的『共深點 (CMP) 疊加』流程。在現場採集中，震源與檢波器的相對位置會不斷移動，使不同的震測對照射到地下的同一個點。由於波傳路徑（偏移距）不同，反射波在時間軸上排列成雙曲線。本圖解釋了如何先透過修正 NMO 時差將雙曲線『拉平』，使原本不同時間的反射訊號對齊到水平線上，隨後進行加總疊加。疊加的作用極其強大，它能有效壓制隨機噪音並強化相干的反射界面訊號，這使得埋藏於數千公尺深處的薄層構造得以被清晰識別。這張圖標誌著地震學從單一記錄邁向數位合成影像的轉變，是現代油氣勘探與地質調查能取得精確剖面的靈魂步驟，揭示了信號處理如何轉化為對地球內部的深刻透視。"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.3_p21_15.png",
+                    "desc": "這是一張對比顯著的地震剖面偏移處理前後圖。圖左呈現的是未處理的原始記錄，可以看到受傾斜地層與尖銳稜角影響，產生了大量的繞射波和幾何扭曲，構造位置嚴重偏移。圖右則是應用了偏移 (Migration) 演算法後的結果。偏移利用波動方程的時空對稱性，將原本發散的能量重新匯聚到正確的地下座標。我們可以看到原本模糊的斷層帶、背斜軸部在處理後變得清晰可辨，構造位置回到了其真實的地質空間中。這張圖證明了純粹的時間記錄必須經過嚴謹的波動幾何修正，才能真正代表地下的實體構造。對於地質學家解釋地層沉積環境與斷裂演化歷史而言，偏移處理是獲取『真實結構圖』的最後一道關鍵工序，也體現了波動力學與計算幾何在地球科學中的完美融合。"
+                }
+            ],
+            "formulas": [
+                {
+                    "latex": "T^2(x) = \\\\frac{x^2}{v_{rms}^2} + t_0^2",
+                    "define": "反射走時雙曲線方程",
+                    "symbols": [
+                        "$T(x)$：偏移距為 x 時的雙向走時。",
+                        "$x$：震源到接收器的水平距離。",
+                        "$v_{rms}$：均方根速度，代表射線穿透多層介質的有效平均速度。",
+                        "$t_0$：零偏移距時的垂直走時。"
+                    ]
+                },
+                {
+                    "latex": "\\\\Delta T_{\\\\text{NMO}} \\\\approx \\\\frac{x^2}{2V_{\\\\text{nmo}}^2 t_0}",
+                    "define": "正常時差 (NMO) 修正量",
+                    "symbols": [
+                        "$\\\\Delta T_{\\\\text{NMO}}$：修正量，用於抵消因偏移距 x 增加而導致的延遲。",
+                        "$V_{\\\\text{nmo}}$：疊加速度，分析此速度可推導出各層的真實波速。"
+                    ]
+                }
+            ],
+            "point_list": ["反射波走時隨偏移距呈雙曲線分佈。", "CMP 疊加能有效提升訊噪比 (S/N Ratio)。", "偏移 (Migration) 能消除繞射並將構造歸位。"]
+        },
+        "s3_4": {
+            "title": "3.4 球體地球中的波傳 (Spherical Earth)",
+            "summary": "當觀測尺度擴及全球，必須考慮地球曲率，波速隨深度的正梯度會導致射線呈現向上彎曲的弧形。",
+            "images": [
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.4_p4_1.png",
+                    "desc": "此圖展示了在球對稱地球中，當地震波速隨深度穩定增加時，射線路徑的演化規律。與平面模型的直線段不同，射線在此表現為平滑、對稱的圓弧。根據球座標下的司乃爾定律，射線參數 $p = r \\\\sin(i)/v$ 沿路徑保持不變，這意味著隨著深度增加（$r$ 減小、$v$ 增加），入射角必須增大直到達到 $90^\\\\circ$ 產生轉折，隨後折回地表。圖下方的走時曲線呈現凹向下的特性，這是因為距離越遠的地震波穿透得越深，進入了高速的地函區域，傳播效率隨之提高。這張照片深刻揭示了地球球形幾何如何決定全球震波的抵達順序，是理解深部地震層析成像與全球速度基準模型（如 PREM）計算方式的核心視覺依據。它向我們展示了，我們觀測到的每一筆走時數據，實際上都蘊含了射線在深部轉折點處物理性質的累積印記。"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.4_p5_3.png",
+                    "desc": "此圖詳盡解釋了低速帶 (LVZ) 對地震波傳播的強烈干擾，揭示了地球內部熱力狀態對波動路徑的控制。當波進入波速突然下降的層位（如上地函的軟流圈）時，射線會發生劇烈的向下折射，而非正常的向上偏折。這導致在地表特定距離（如圖中的陰影區）觀測不到直接射入該層位的能量，形成觀測空白。圖中描繪了射線的分散與聚焦，這種『陰影帶』現象曾是地震學家探測地心結構時最大的挑戰之一，但也正是透過對陰影區邊界信號的分析，我們證實了軟流圈物質的半熔融性質。此圖對於理解板塊下方如何存在一個足以讓地殼滑動的弱帶具有決定性學術價值，也展示了波動力學對於探測無法直接取樣的地球深部狀態具有多麼精準的診斷能力。"
+                }
+            ],
+            "formulas": [
+                {
+                    "latex": "p = \\\\frac{r \\\\sin(i)}{v(r)} = \\\\frac{dT}{d\\\\Delta}",
+                    "define": "球體射線方程式",
+                    "symbols": [
+                        "$p$：球體射線參數。",
+                        "$r$：該點距離地心的半徑。",
+                        "$i$：射線與徑向方向的夾角。",
+                        "$v(r)$：隨半徑變化的地震波速度。",
+                        "$dT/d\\\\Delta$：走時曲線的切線斜率，代表每單位弧度距離的時間變化。"
+                    ]
+                }
+            ],
+            "point_list": ["射線參數 p 在路徑上保持守恆。", "速度隨深度增加會導致射線呈現凹向上的弧形。", "低速層 (LVZ) 會導致射線向下折射形成地表陰影帶。"]
+        },
+        "s3_5": {
+            "title": "3.5 體波走時研究",
+            "summary": "透過全球數十萬筆地震記錄的彙整，地震學家建立了地球內部速度隨深度的一維分佈模型（如 PREM）。",
+            "images": [
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.5_p6_2.png",
+                    "desc": "這是一張極其宏大的數據擬合圖，展示了全球數十萬個地震觀測點的走時資料與 IASP91 基準模型之間的對應關係。散點圖橫軸為震央角度，縱軸為走時。圖中清晰的各個線條分支代表了 P、S、PcP、PKP 等全球主要震相。令人震撼的是，儘管地球內部存在顯著的側向不均質性，觀測數據仍展現出高度一致的層狀規律，證明一維基準速度模型的可靠性。這張圖是現代全球地震定位系統與結構研究的基石，告訴我們地球內部的平均狀態是可以被精確數學描述的。透過對這些分支『斜率』與『斷點』的分析，科學家得以精確劃分出地函過渡帶、核幔邊界等物理界面。此圖凝聚了上百年地震網記錄的精華，展示了大數據如何透過物理建模轉化為對地球深部構造的宏觀藍圖，是現代地球物理學最偉大的成就之一。"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.5_p11_10.png",
+                    "desc": "此圖詳細剖析了核心震相 PKP 的走時結構，是人類發現固態內核的數位證據。由於外核波速遠低於地函，波進入外核後會產生強烈的折射。圖中區分了不同的分支（ab、bc 與穿透內核的 df）。科學家 Inge Lehmann 在 1936 年正是透過觀察這些分支在原本理論上的陰影區中仍有微弱先達波出現，進而推斷出地球中心存在一個固態、高速的內核。圖中的『焦散點』位置說明了外核對地震波能量的強烈透鏡聚焦效應。此照片代表了人類對地心最深處（半徑 1221 公里）的精密測量，展示了地震波如何穿透六千多公力的地層，並帶回關於內核旋轉與化學組成的關鍵資訊。透過分析 PKP 的到時特徵，我們不僅能得知內核的大小，更能量化核心邊界的粗糙度與非均質性，是理解地磁產生機制的重要觀測資料。"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.5_p14_13.jpeg",
+                    "desc": "這是一張利用『地震陣列』觀測技術所繪製的高解析度地震圖集。與單一測站不同，陣列技術使用數十到數百個緊密排列的檢波器，藉由信號的相干性來過濾雜訊。圖中展示了波形隨測站位置連續變化的過程，這種呈現方式能突顯出微弱的後抵達波，如地函深部不均質體或 D'' 層底部的超低速帶 (ULVZ) 所反射的能量。這技術宛如地學界的『合成孔徑雷達』，將原本單調的信號轉化為具有立體空間解析度的影像。透過測量波陣面通過陣列的『慢度』，科學家可以反求波是從哪個角度射入地底的，進而定位地函湧流的起源點或核幔交界處的化學反應區。此圖標誌著地震學從點對點觀測進化到三維動態成像的階段，揭示了地球內部不僅是靜態的分層，更充滿了尺度數百公里的動力學起伏與物質交換現象。"
+                }
+            ],
+            "formulas": [],
+            "point_list": ["IASP91 與 PREM 提供全球統一的速度參考基準。", "PKP 波分支證實了固態內核的存在。", "D'' 層顯示出下地函底部的強烈側向非均質性。"]
+        },
+        "s3_6": {
+            "title": "3.6 非均向性地球結構",
+            "summary": "非均向性是指介質性質隨方向而異，其最直接證據是剪力波分裂（Shear Wave Splitting）。",
+            "images": [
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.6_p9_5.jpeg",
+                    "desc": "此圖生動演示了『剪力波分裂』物理過程，這是地球內部非均向性的『指紋』。當一個單純的 S 波進入具有定向排列礦物（如地函橄欖石）的非均向介質時，它會分解成兩個偏振方向垂直且速度不同的脈衝：快波 S1 與慢波 S2。圖中詳細標註了兩者的抵達時間差 $\\\\delta t$ 以及快波的偏振方位 $\\\\phi$。這兩個參數對研究地球動力學極其重要，因為它們直接反映了地下物質受應力擠壓後產生的微觀組織。透過觀測全球 SKS 核心波的分裂，科學家可以『看見』地殼下方的地函流動模式與板塊運動歷史。這張照片將抽象的張量物理具體化，展示了地震波如何記錄下地球內部流變學的資訊，證明地球並非靜態的均質球體，而是具有方向性結構的動態系統，為我們解讀地函對流提供了最重要的指南針。"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.6_p4_1.png",
+                    "desc": "此圖深入探討了微觀礦物特性與巨觀地震觀測的連結，核心是上地函的主體礦物——橄欖石 (Olivine)。單顆橄欖石晶體具有極強的本質各向異性：在快軸 [100] 方向的速度比慢軸快了近 25%。在大規模的地函對流或板塊剪切作用下，無數細小的橄欖石晶體會受力產生『晶格優選方位 (LPO)』，像魚群一樣一致對齊。圖中展示了這種定向排列如何導致宏觀地震波速隨觀測角度改變。這解釋了為什麼我們在海洋板塊運動路徑上側得的波速會隨方位角規律變動。這幅圖是連結礦物物理與板塊構造論的重要橋樑，證明了大規模地質運動會在岩石微觀結構中留下永恆的物理印記。透過解析這種定向排列，我們得以重建過去數億年來的行星內部流動路徑，是現代結構地震學最具診斷性的觀測依據。"
+                }
+            ],
+            "formulas": [
+                {
+                    "latex": "\\\\sigma_{ij} = c_{ijkl} e_{kl}",
+                    "define": "廣義虎克定律 (Generalized Hooke's Law)",
+                    "symbols": [
+                        "$\\\\sigma_{ij}$：應力張量，描述物體內部受力的分布與狀態。",
+                        "$e_{kl}$：應變張量，描述物體受力後產生的形變比例。",
+                        "$c_{ijkl}$：彈性模量張量，包含 81 個元素。在非均向性介質中，最多可有 21 個獨立的彈性常數，決定了波速隨方向改變的規律。"
+                    ]
+                }
+            ],
+            "point_list": ["非均向性來自形狀優選方位 (SPO) 與晶格優選方位 (LPO)。", "地函中的橄欖石定向排列是產生各向異性的主因。", "剪力波分裂是探測非均向性最直接的手段。"]
+        },
+        "s3_7": {
+            "title": "3.7 衰減與非彈性",
+            "summary": "地震波能量損耗用品質因子 Q 來量化。上地函軟流圈（80-220km）具有顯著的高衰減（低 Q 值）。",
+            "images": [
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.7_p14_10.png",
+                    "desc": "圖中展示了全球上地函品質因子 $Q$ 隨深度的分佈模型，這是衡量地震波能量耗散的關鍵指標。最引人注目的特徵是深度約 100 到 200 公里處的顯著低 $Q$ 值帶（強衰減帶），這與低速帶（軟流圈）的位置完全吻合。該區域物質接近岩石熔點，甚至存在 1-5% 的局部熔融，導致地震波傳過此層時，機械能被劇烈轉化為熱能。相比之下，地殼與深部下地函的 $Q$ 值較高，顯示其物質更為剛硬。這張衰減剖面圖提供了除了速度以外，另一個獨立的參數來標定地球內部的熱力學狀態。它告訴我們，軟流圈不僅是『慢』的，更是『熱且軟』的。研究 $Q$ 值分佈對於評估遠距離地震波的能量殘留與破壞力具有重要實務價值，也為我們解讀地球熱演化與內部的能量循環機制提供了深層的觀測證據。"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.7_p6_7.png",
+                    "desc": "此圖介紹了地震波動力學中優美的『菲涅耳帶 (Fresnel Zone)』概念，挑戰了傳統射線理論中『細線傳播』的簡單觀念。圖中展示了能量實際上是沿著一個具有厚度的『香蕉形』空間區域傳遞的。其核心物理意義在於：即使震源與接收器直線連線上沒有障礙物，只要位於菲涅耳帶寬度範圍內的非均質體，都會對波的震幅與波形產生散射干擾。這決定了地震探測的最小解析度界限——我們無法精確分辨比第一菲涅耳帶寬度更小的地下細節。圖中的對稱幾何揭示了波動能量如何感應周圍介質的物理性質，這對於解釋高解析度地震層析成像中的震幅異常具有決定性指導意義。透過理解菲涅耳帶，地震學家可以更精確地校正成像中的聚焦與散焦效應，從而更準確地重建如隱沒板塊或熱點湧流的精細邊界特徵。"
+                }
+            ],
+            "formulas": [
+                {
+                    "latex": "A = A_0 e^{-\\\\frac{\\\\pi f t}{Q}}",
+                    "define": "振幅隨時間衰減方程 (非彈性衰減)",
+                    "symbols": [
+                        "$A$：傳播一段時間 $t$ 後的震幅。",
+                        "$A_0$：震源處的初始震幅。",
+                        "$f$：地震波的頻率。",
+                        "$t$：波傳遞經過的時間。",
+                        "$Q$：品質因子 (Quality Factor)。$Q$ 值越小表示衰減越嚴重，能量耗損越大。"
+                    ]
+                }
+            ],
+            "point_list": ["Q 因子量化能量耗散，Q 越小衰減越快。", "衰減機制包含幾何擴散、散射、多路徑與非彈性衰減。", "軟流圈的高衰減性證明了該區域接近熔點的性質。"]
+        },
+        "s3_8": {
+            "title": "3.8 地函與地核的組成",
+            "summary": "透過地震波速結合 Adams-Williamson 方程推導密度，確立了地球內部為矽酸鹽地函與金屬地核的化學分異。",
+            "images": [
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.8_p1_1.png",
+                    "desc": "此圖探討了慣性矩係數對地球內部密度分佈的強力約束。根據大地測量得出地球慣性矩係數 $y = I/Ma^2$ 為 0.3308，顯著小於質量均勻球體的理論值 0.4。圖中描繪了密度如何隨深度劇增，並在核幔邊界 (CMB) 處發生了從 5.5 到 10.0 g/cm³ 的驚人跳躍。這提供了確鑿的物理證據，證明地球中心匯聚了極高密度的重元素。結合地震波速數據，圖中曲線展現了密度向地心高度集中的趨勢，支撐了地核由鐵鎳合金組成的科學定論。這張照片代表了天文學、重力學與地震學跨界數據的相互印證，揭示了地球如同一顆巨大的液壓機，在引力分異作用下將重元素送往地心，塑造了人類賴以生存的層狀結構家園。它是理解行星演化過程中化學分異與物質分離最基礎的數學展示，奠定了現代地球內部物理學的架構。"
+                },
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/fig_3.8_p2_2.jpeg",
+                    "desc": "此圖呈現了著名的 Birch 定則——即體聲速與密度之間的線性關係實驗驗證。圖中將多種不同原子序數元素的實驗室數據與地球觀測值進行對比，我們可以看到代表地球核心觀測點的『星星』符號，精準地落在了鐵 (Fe) 的分布曲線帶內。這不僅是證明地核主體為鐵鎳金屬的最有力化學證據，更揭示了細微的差異：外核密度比純鐵低約 10%，意味著其內必定混有硫、氧或矽等輕元素。這項發現對解釋地核對流與地磁產生具有深遠意義。此圖是礦物物理學與地震學完美整合的典範，它將抽象的地震波速轉化為具體的元素解釋，讓科學家得以在實驗室的小型樣品中模擬數千公里深處的高壓狀態，並由此反推出整個行星的物質藍圖。它是現代地球化學不可或缺的參考圖表，展示了波動物理觀測與物質化學屬性如何透過能量方程鎖定在一起。"
+                }
+            ],
+            "formulas": [
+                {
+                    "latex": "\\\\frac{d\\\\rho}{dr} = -\\\\frac{Gm(r)\\\\rho(r)}{r^2 \\\\Phi(r)}",
+                    "define": "Adams-Williamson 方程式",
+                    "symbols": [
+                        "$\\\\rho$：密度隨半徑 $r$ 的變化率。",
+                        "$G$：重力常數。",
+                        "$m(r)$：半徑 $r$ 以內的地球質量總和。",
+                        "$\\\\Phi$：地震參數 (Seismic parameter)，$\\\\Phi = \\\\alpha^2 - \\\\frac{4}{3}\\\\beta^2$，由觀測到的 P 波 ($\\\\alpha$) 與 S 波 ($\\\\beta$) 速度決定。"
+                    ]
+                }
+            ],
+            "point_list": ["地函主要由矽酸鹽（如橄欖岩）組成。", "410km 與 660km 不連續面是礦物高壓相變的結果。", "地核主要是鐵鎳合金，外核含有約 10% 輕元素。"]
+        },
+        "s3_9": {
+            "title": "3.9 Antigravity: 紀錄剖面圖實例分析",
+            "summary": "展示 2024/04/03 花蓮地震實例紀錄，解析台灣地殼波傳特性。",
+            "images": [
+                {
+                    "url": "https://raw.githubusercontent.com/JinJia0618/Seismology-CH.3/main/record_section.png",
+                    "desc": "這張紀錄剖面圖 (Record Section) 直觀展示了 2024 年 4 月 3 日花蓮強震後的波傳過程。透過 Taiwan GDMS 系統，我們可以觀察到 P 波與 S 波隨震央距離遞增的走時特徵。圖中明顯的震相連續性，對於校正台灣複雜的地殼速度模型具有極高的學術研究價值。此份資料不僅是災難紀錄，更是優化預警系統、強化國家韌性設計不可或缺的觀測依據。"
+                }
+            ],
+            "formulas": [],
+            "point_list": ["2024/04/03 花蓮地震規模 7.2，是台灣近年最強震。", "Record Section 展示了地震波在全台觀測網的傳播規律。", "資料取自 Taiwan GDMS，具備高時空解析度。"]
+        }
+    }
+    </script>
+
+    <script>
+        const pages = ['hero-page', 'menu-page', 'content-page'];
+        const sectionData = JSON.parse(document.getElementById('section-data').textContent);
+
+        // 初始化主選單
+        function renderMenu() {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = "";
+            Object.keys(sectionData).forEach(key => {
+                const item = sectionData[key];
+                const card = document.createElement('div');
+                card.onclick = () => showSection(key);
+                card.className = `menu-card glass-card p-10 rounded-[2rem] border-t-2 ${getBorderColor(key)}`;
+                card.innerHTML = `
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 font-bold bg-slate-800 text-sky-400">
+                        ${key.replace('s3_', '3.')}
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-3">${item.title.split(':')[0].split('(')[0]}</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed line-clamp-3">${item.summary}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function getBorderColor(key) {
+            const colors = {
+                s3_1: "border-sky-500", s3_2: "border-indigo-500", s3_3: "border-purple-500",
+                s3_4: "border-rose-500", s3_5: "border-orange-500", s3_6: "border-yellow-500",
+                s3_7: "border-emerald-500", s3_8: "border-teal-500", s3_9: "border-blue-400"
+            };
+            return colors[key] || "border-slate-500";
+        }
+
+        function showPage(id) {
+            pages.forEach(p => {
+                const el = document.getElementById(p);
+                if (p === id) {
+                    el.classList.remove('hidden-page');
+                    el.style.display = 'block';
+                    setTimeout(() => el.style.opacity = '1', 50);
+                } else {
+                    el.style.opacity = '0';
+                    setTimeout(() => el.style.display = 'none', 600);
+                }
+            });
+            const btn = document.getElementById('back-home-btn');
+            if (id === 'content-page') {
+                btn.classList.remove('hidden');
+                btn.style.opacity = '1';
+                btn.style.transform = 'translateY(0)';
+            } else {
+                btn.style.opacity = '0';
+                btn.style.transform = 'translateY(50px)';
+                setTimeout(() => btn.classList.add('hidden'), 300);
+            }
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function showSection(key) {
+            const data = sectionData[key];
+            const body = document.getElementById('section-body');
+            
+            let imagesHtml = data.images.map(img => `
+                <div class="mb-16">
+                    <div class="img-container">
+                        <img src="${img.url}" alt="地震學相關圖表">
+                    </div>
+                    <div class="mt-4 p-8 glass-card rounded-[2rem] border-l-4 border-sky-500">
+                        <h5 class="text-sky-400 font-bold mb-4 flex items-center">
+                            <span class="key-badge">照片深度敘述</span>
+                        </h5>
+                        <p class="text-slate-300 text-lg leading-relaxed">${img.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            let formulasHtml = data.formulas.length > 0 ? `
+                <div class="mt-16 mb-12">
+                    <h4 class="text-3xl font-bold text-sky-400 mb-8 flex items-center">
+                        <span class="mr-3">∑</span> 物理公式與參數定義
+                    </h4>
+                    ${data.formulas.map(f => `
+                        <div class="formula-box">
+                            <div class="math-block text-2xl">$$${f.latex}$$</div>
+                            <div class="mt-6">
+                                <p class="text-white font-bold mb-4 text-xl">公式定義：${f.define}</p>
+                                <ul class="space-y-3 text-slate-400">
+                                    ${f.symbols.map(s => `<li class="flex items-start"><span class="text-sky-500 mr-2">•</span><span>${s}</span></li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : '';
+
+            let pointListHtml = `
+                <div class="summary-box">
+                    <h4 class="text-2xl font-bold text-green-400 mb-6 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 9-4.477 9-10S17.523 2 12 2 3 6.477 3 12s3.477 10 9 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                        本節重點總結 (Section Summary)
+                    </h4>
+                    <ul class="space-y-4 pl-6 border-l-2 border-green-500/30">
+                        ${data.point_list.map(p => `<li class="text-slate-200 text-lg italic leading-relaxed">${p}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+
+            body.innerHTML = `
+                <div class="mb-16">
+                    <button onclick="showPage('menu-page')" class="text-sky-400 hover:text-white flex items-center mb-8 group bg-slate-900/50 px-5 py-2 rounded-xl border border-white/5 transition-all">
+                        <span class="mr-2 transform group-hover:-translate-x-1 transition-transform">←</span> 返回章節目錄
+                    </button>
+                    <h1 class="text-6xl font-bold heading-font text-white drop-shadow-xl mb-10">${data.title}</h1>
+                    
+                    <div class="glass-card p-10 rounded-[3rem] mb-12 bg-sky-950/20 border-sky-900/30">
+                        <p class="text-2xl leading-relaxed text-slate-200 font-light">${data.summary}</p>
+                    </div>
+
+                    <div class="space-y-20">
+                        ${imagesHtml}
+                    </div>
+
+                    ${formulasHtml}
+                    ${pointListHtml}
+                </div>
+            `;
+            
+            showPage('content-page');
+            
+            // 觸發 KaTeX 渲染
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError : false
+                });
+            }
+            // 初始化 3.2 的司乃爾模擬器
+            if (key === 's3_2') setTimeout(initSnell, 100);
+        }
+
+        function initSnell() {
+            const canvas = document.getElementById('snellCanvas');
+            const input = document.getElementById('s-angle');
+            if (!canvas || !input) return;
+            const ctx = canvas.getContext('2d');
+            const draw = () => {
+                const angle = input.value;
+                const valDisp = document.getElementById('s-val');
+                if(valDisp) valDisp.innerText = angle;
+                const rad = angle * Math.PI / 180;
+                const v1 = 5, v2 = 8;
+                const sinOut = (v2 * Math.sin(rad)) / v1;
+                const outRad = Math.asin(sinOut);
+                ctx.clearRect(0, 0, 240, 150);
+                ctx.strokeStyle = '#334155'; ctx.setLineDash([4, 4]);
+                ctx.beginPath(); ctx.moveTo(0, 75); ctx.lineTo(240, 75); ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.strokeStyle = '#0ea5e9'; ctx.lineWidth = 3; ctx.shadowBlur = 10; ctx.shadowColor = '#0ea5e9';
+                ctx.beginPath(); ctx.moveTo(120 - Math.tan(rad)*75, 0); ctx.lineTo(120, 75); ctx.stroke();
+                ctx.strokeStyle = '#fb7185'; ctx.shadowColor = '#fb7185';
+                if (!isNaN(outRad)) {
+                    ctx.beginPath(); ctx.moveTo(120, 75); ctx.lineTo(120 + Math.tan(outRad)*75, 150); ctx.stroke();
+                } else {
+                    ctx.fillStyle = '#fb7185'; ctx.font = 'bold 10px Arial'; ctx.fillText('CRITICAL / TOTAL REFLECTION', 40, 60);
+                    ctx.beginPath(); ctx.moveTo(120, 75); ctx.lineTo(120 + Math.tan(rad)*75, 0); ctx.stroke();
+                }
+                ctx.shadowBlur = 0;
+            };
+            input.oninput = draw;
+            draw();
+        }
+
+        function animateWave() {
+            const path = document.getElementById('dynamicWave');
+            if(!path) return;
+            let time = 0;
+            function loop() {
+                time += 0.02;
+                let d = "M0,100 ";
+                for (let x = 0; x <= 1000; x += 10) {
+                    const y = 100 + Math.sin(x * 0.01 + time) * 20 + Math.sin(x * 0.05 - time * 2) * 10 * Math.exp(-Math.abs(500-x)/200);
+                    d += `L${x},${y} `;
+                }
+                path.setAttribute('d', d);
+                requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+        window.onload = () => {
+            renderMenu();
+            const hero = document.getElementById('hero-page');
+            if(hero) hero.style.opacity = '1';
+            animateWave();
+        };
+    </script>
+</body>
+</html>
